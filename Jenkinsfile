@@ -2,38 +2,37 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_CREDENTIALS = 'docker-hub-credentials-id'  // Remplace par ton ID de credentials Jenkins
+        DOCKER_HUB_CREDENTIALS = 'docker-hub-credentials-id' // Remplace par ton ID de credentials Jenkins
         DOCKER_IMAGE = "fedibarkouti/student-management:latest" // Nom de l'image Docker
     }
 
     stages {
 
-        stage('Checkout') {
+        stage('Récupération du code') {
             steps {
                 echo "=== Récupération du code depuis GitHub ==="
-                git branch: 'main', url: 'https://github.com/FediB7/Fedi_4Sleam1.git'
+                git url: 'https://github.com/FediB7/Fedi_4Sleam1.git', branch: 'main'
             }
         }
 
         stage('Tests Maven') {
             steps {
                 echo "=== Exécution des tests Maven ==="
-                // Utiliser Maven Wrapper pour Java 17, sans ignorer les tests
-                sh './mvnw test || echo "Tests échoués mais continuation"'
+                sh 'mvn test || echo "Tests échoués mais continuation"'
             }
         }
 
-        stage('Build Maven') {
+        stage('Création du livrable') {
             steps {
-                echo "=== Compilation et packaging Maven ==="
-                sh './mvnw clean package -DskipTests || echo "Build échoué mais continuation"'
+                echo "=== Création du livrable JAR ==="
+                sh 'mvn clean package -DskipTests || echo "Build échoué mais continuation"'
                 archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                echo "=== Construction de l'image Docker ==="
+                echo "=== Construction de l\'image Docker ==="
                 sh "docker build -t ${DOCKER_IMAGE} ."
             }
         }
