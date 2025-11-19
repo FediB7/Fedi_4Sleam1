@@ -3,7 +3,7 @@ pipeline {
     
     tools {
         // Configurez ces outils dans "Gérer Jenkins" > "Outils globaux"
-        nodejs 'nodejs'  // Si vous utilisez Node.js
+       // nodejs 'nodejs'  // Si vous utilisez Node.js
     }
     
     stages {
